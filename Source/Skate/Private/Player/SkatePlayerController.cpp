@@ -7,6 +7,7 @@
 #include "Character/SkateCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/Notify/AnimNotify_BroadcastDelegate.h"
+#include "Data/DataAsset_SkateControlSettings.h"
 
 void ASkatePlayerController::BeginPlay()
 {
@@ -16,12 +17,10 @@ void ASkatePlayerController::BeginPlay()
 	{
 		if (UAnimNotify_BroadcastDelegate* DelegateNotify = Cast<UAnimNotify_BroadcastDelegate>(NotifyEvent.Notify))
 		{
-
 			DelegateNotify->OnNotify.AddUObject(this, &ThisClass::OnNotifyPushForwardMontage);
 		}
 	}
 }
-
 
 void ASkatePlayerController::Tick(float DeltaSeconds)
 {
@@ -31,11 +30,13 @@ void ASkatePlayerController::Tick(float DeltaSeconds)
 
 	SkateCharacter->AddMovementInput(Direction);
 
-	CurrentAcceleration -= DeltaSeconds / 8;
+	CurrentAcceleration -= DeltaSeconds / SkateControlSettings->GetAccelerationDuration();
 
-	if (CurrentAcceleration <= 0.15f)
+	float MinAcceleration = SkateControlSettings->GetMinAcceleration();
+
+	if (CurrentAcceleration <= MinAcceleration)
 	{
-		CurrentAcceleration = 0.15f;
+		CurrentAcceleration = MinAcceleration;
 	}
 }
 
@@ -43,8 +44,8 @@ void ASkatePlayerController::PushForward()
 {
 	CurrentAcceleration = 1;
 
-	FVector Direction = GetTargetMovementDirection() * 125;
-	
+	FVector Direction = GetTargetMovementDirection() * SkateControlSettings->GetPushImpulse();
+
 	SkateCharacter->GetCharacterMovement()->AddImpulse(Direction, true);
 }
 
@@ -65,6 +66,8 @@ void ASkatePlayerController::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(TurnInput, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
 
+	EnhancedInputComponent->BindAction(SlowdownInput, ETriggerEvent::Triggered, this, &ThisClass::Input_Slowdown);
+
 	ULocalPlayer* LocalPlayer = GetLocalPlayer();
 
 	if (auto* Subsys = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
@@ -76,7 +79,7 @@ void ASkatePlayerController::SetupInputComponent()
 void ASkatePlayerController::Input_Accelerate()
 {
 	//TODO: MOVE THIS LOGIC TO A COMPONENT
-	if (CurrentAcceleration < 0.4f) //min acceleration
+	if (CurrentAcceleration < SkateControlSettings->GetTargetAccelerationForImpulse()) //min acceleration
 	{
 		UAnimInstance* AnimInstance = SkateCharacter->GetMesh()->GetAnimInstance();
 
@@ -91,17 +94,23 @@ void ASkatePlayerController::Input_Accelerate()
 
 void ASkatePlayerController::Input_Turn(const FInputActionValue& InputValue)
 {
-	 float TurnRate = InputValue.Get<float>();
-	TurnRate *= 0.6f;
-	UAnimInstance* AnimInstance = SkateCharacter->GetMesh()->GetAnimInstance();
+	float TurnValue = InputValue.Get<float>();
 
-	check(AnimInstance);
+	TurnValue *= SkateControlSettings->GetTurnRate();
 
-	if (AnimInstance->Montage_IsPlaying(PushSkateForwardMontage) == false)
+	AddYawInput(TurnValue);
+}
+
+void ASkatePlayerController::Input_Slowdown()
+{
+	CurrentAcceleration = FApp::GetDeltaTime();
+
+	float MinAcceleration = SkateControlSettings->GetMinAcceleration();
+
+	if (CurrentAcceleration <= MinAcceleration)
 	{
-		AddYawInput(TurnRate);
+		CurrentAcceleration = MinAcceleration;
 	}
-	
 }
 
 void ASkatePlayerController::OnNotifyPushForwardMontage()

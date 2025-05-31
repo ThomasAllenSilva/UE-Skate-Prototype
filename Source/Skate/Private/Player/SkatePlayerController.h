@@ -10,6 +10,7 @@ class UInputAction;
 class UInputMappingContext;
 class ASkateCharacter;
 class UAnimMontage;
+class UDataAsset_SkateControlSettings;
 
 struct FInputActionValue;
 
@@ -38,6 +39,8 @@ private:
 
 	void Input_Turn(const FInputActionValue& InputValue);
 
+	void Input_Slowdown();
+
 	void OnNotifyPushForwardMontage();
 
 	FVector GetTargetMovementDirection();
@@ -65,4 +68,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAnimMontage> PushSkateForwardMontage;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UDataAsset_SkateControlSettings> SkateControlSettings;
 };
