@@ -9,7 +9,9 @@
 class UInputAction;
 class UInputMappingContext;
 class ASkateCharacter;
+class UAnimMontage;
 
+struct FInputActionValue;
 
 /**
  * 
@@ -27,11 +29,18 @@ public:
 protected:
 	virtual void OnPossess(APawn* InPawn);
 
+	virtual void BeginPlay() override;
+
 	virtual void SetupInputComponent() override;
 
 private:
 	void Input_Accelerate();
 
+	void Input_Turn(const FInputActionValue& InputValue);
+
+	void OnNotifyPushForwardMontage();
+
+	FVector GetTargetMovementDirection();
 private:
 	/* Movement */
 	UPROPERTY(EditAnywhere)
@@ -39,13 +48,10 @@ private:
 
 	/* Inputs */
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> Accelerate;
+	TObjectPtr<UInputAction> AccelerateInput;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> TurnLeft;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> TurnRight;
+	TObjectPtr<UInputAction> TurnInput;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> SlowdownInput;
@@ -55,4 +61,8 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<ASkateCharacter> SkateCharacter;
+
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UAnimMontage> PushSkateForwardMontage;
 };
