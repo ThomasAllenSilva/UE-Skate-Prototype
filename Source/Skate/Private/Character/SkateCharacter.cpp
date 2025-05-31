@@ -2,3 +2,14 @@
 
 
 #include "Character/SkateCharacter.h"
+#include "Components/SkaterComponent.h"
+
+ASkateCharacter::ASkateCharacter()
+{
+	SkaterComponent = CreateDefaultSubobject<USkaterComponent>("SkaterComponent");
+}
+
+USkaterComponent* ASkateCharacter::GetSkaterComponent()
+{
+	return SkaterComponent;
+}

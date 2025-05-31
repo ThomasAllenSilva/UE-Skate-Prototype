@@ -2,33 +2,79 @@
 
 
 #include "Components/SkaterComponent.h"
+#include "Animation/Notify/AnimNotify_BroadcastDelegate.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Player/SkatePlayerController.h"
 
-// Sets default values for this component's properties
 USkaterComponent::USkaterComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
+	PrimaryComponentTick.bAllowTickOnDedicatedServer = false;
 }
 
-
-// Called when the game starts
 void USkaterComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	check(PushSkateForwardMontage);
+
+	OwningCharacter = CastChecked<ACharacter>(GetOwner());
+
+	OwningCharacterAnimInstance = OwningCharacter->GetMesh()->GetAnimInstance();
+
+	for (const FAnimNotifyEvent& NotifyEvent : PushSkateForwardMontage->Notifies)
+	{
+		if (UAnimNotify_BroadcastDelegate* DelegateNotify = Cast<UAnimNotify_BroadcastDelegate>(NotifyEvent.Notify))
+		{
+			DelegateNotify->OnNotify.AddUObject(this, &ThisClass::OnNotifyPushForwardMontage);
+		}
+	}
 }
 
-
-// Called every frame
-void USkaterComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USkaterComponent::BeginDestroy()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	Super::BeginDestroy();
 
-	// ...
+	if (PushSkateForwardMontage == nullptr) //this is required because of the CDO
+	{
+		return;
+	}
+
+	for (const FAnimNotifyEvent& NotifyEvent : PushSkateForwardMontage->Notifies)
+	{
+		if (UAnimNotify_BroadcastDelegate* DelegateNotify = Cast<UAnimNotify_BroadcastDelegate>(NotifyEvent.Notify))
+		{
+			DelegateNotify->OnNotify.RemoveAll(this);
+		}
+	}
 }
 
+void USkaterComponent::TryPlayPushForwardMontage()
+{
+	if (IsAbleToPushForward())
+	{
+		OwningCharacterAnimInstance->Montage_Play(PushSkateForwardMontage);
+	}
+}
+
+bool USkaterComponent::IsAbleToPushForward() const
+{
+	check(OwningCharacterAnimInstance);
+
+	bool bIsPlayingPushMontage = OwningCharacterAnimInstance->Montage_IsPlaying(PushSkateForwardMontage);
+
+	bool bIsFalling = OwningCharacter->GetMovementComponent()->IsFalling();
+
+	bool bIsAbleToPushForward = (bIsPlayingPushMontage == false && bIsFalling == false);
+
+	return bIsAbleToPushForward;
+}
+
+void USkaterComponent::OnNotifyPushForwardMontage()
+{
+	ASkatePlayerController* SkatePlayerController = CastChecked<ASkatePlayerController>(OwningCharacter->GetController());
+
+	SkatePlayerController->PushForward();
+}

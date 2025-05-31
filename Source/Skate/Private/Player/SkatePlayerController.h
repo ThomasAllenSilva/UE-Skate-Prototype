@@ -30,8 +30,6 @@ public:
 protected:
 	virtual void OnPossess(APawn* InPawn);
 
-	virtual void BeginPlay() override;
-
 	virtual void SetupInputComponent() override;
 
 private:
@@ -41,9 +39,8 @@ private:
 
 	void Input_Slowdown();
 
-	void OnNotifyPushForwardMontage();
+	FVector GetTargetMovementDirection() const;
 
-	FVector GetTargetMovementDirection();
 private:
 	/* Movement */
 	UPROPERTY(EditAnywhere)
@@ -63,11 +60,7 @@ private:
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 
 	UPROPERTY()
-	TObjectPtr<ASkateCharacter> SkateCharacter;
-
-
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UAnimMontage> PushSkateForwardMontage;
+	TObjectPtr<ASkateCharacter> SkaterCharacter;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataAsset_SkateControlSettings> SkateControlSettings;

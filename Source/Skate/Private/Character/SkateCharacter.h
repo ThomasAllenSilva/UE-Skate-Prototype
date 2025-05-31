@@ -7,9 +7,19 @@
 
 #include "SkateCharacter.generated.h"
 
+class USkaterComponent;
+
 UCLASS()
 class ASkateCharacter final : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
+	ASkateCharacter();
+
+	USkaterComponent* GetSkaterComponent();
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USkaterComponent> SkaterComponent;
 };
