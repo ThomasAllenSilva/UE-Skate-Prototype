@@ -7,10 +7,16 @@
 #include "EnhancedInputComponent.h"
 #include "Data/DataAsset_SkateControlSettings.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerState.h"
 
 ASkateCharacter::ASkateCharacter()
 {
 	SkaterComponent = CreateDefaultSubobject<USkaterComponent>("SkaterComponent");
+}
+
+UPointsSystemComponent* ASkateCharacter::GetPointsSystemComponent() const
+{
+	return PointsSystemComponent;
 }
 
 void ASkateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -107,6 +113,19 @@ void ASkateCharacter::PushForward()
 	FVector Direction = GetTargetMovementDirection() * SkateControlSettings->GetPushImpulse();
 
 	GetCharacterMovement()->AddImpulse(Direction, true);
+}
+
+void ASkateCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	APlayerState* CurrentPlayerState = GetPlayerState<APlayerState>();
+
+	IPointsSystemInterface* PointsSystemInterface = CastChecked<IPointsSystemInterface>(CurrentPlayerState);
+
+	PointsSystemComponent = PointsSystemInterface->GetPointsSystemComponent();
+
+	check(PointsSystemComponent);
 }
 
 FVector ASkateCharacter::GetTargetMovementDirection() const

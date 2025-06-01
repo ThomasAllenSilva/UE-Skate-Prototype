@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-
+#include "Interfaces/PointsSystemInterface.h"
 #include "SkateCharacter.generated.h"
 
 class UInputAction;
@@ -14,20 +14,29 @@ class UAnimMontage;
 class UDataAsset_SkateControlSettings;
 class USkaterComponent;
 struct FInputActionValue;
+class UPointsSystemComponent;
 
 UCLASS()
-class ASkateCharacter final : public ACharacter
+class ASkateCharacter final : public ACharacter, public IPointsSystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	ASkateCharacter();
 
+
+	//~PointsSystem Interface
+	virtual UPointsSystemComponent* GetPointsSystemComponent() const;
+	//~ End of PointsSystem Interface
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Tick(float DeltaSeconds);
 	USkaterComponent* GetSkaterComponent();
 
 	void PushForward();
+
+protected:
+	virtual void PossessedBy(AController* NewController) override;
 
 private:
 	void Input_Accelerate();
@@ -66,4 +75,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataAsset_SkateControlSettings> SkateControlSettings;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UPointsSystemComponent> PointsSystemComponent;
 };
