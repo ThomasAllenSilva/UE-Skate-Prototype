@@ -17,7 +17,7 @@ void UPlayerPointsUserWidget::NativeConstruct()
 
 	PointsSystemComponent->OnUpdatePoints.AddUObject(this, &ThisClass::OnUpdatePoints);
 
-	PointsText->SetText(0);
+	PointsText->SetText(FText::AsNumber(0));
 }
 
 void UPlayerPointsUserWidget::OnUpdatePoints(int Points)
