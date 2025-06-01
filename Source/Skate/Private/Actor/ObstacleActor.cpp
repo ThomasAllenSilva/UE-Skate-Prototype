@@ -58,6 +58,13 @@ void AObstacleActor::OnPointTriggerBoxOverlap(UPrimitiveComponent* OverlappedCom
 		UPointsSystemComponent* PointsSystemComponent = PointsSystemInterface->GetPointsSystemComponent();
 
 		PointsSystemComponent->AddPoints(ObstaclePoints);
+
+#if WITH_EDITOR
+		if (ObstaclePoints == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("The obstacle added 0 points as a reward, having no actual effect. %s"), *GetFName().ToString());
+		}
+#endif
 	}
 }
 

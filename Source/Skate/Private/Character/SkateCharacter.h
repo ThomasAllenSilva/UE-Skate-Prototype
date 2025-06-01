@@ -24,14 +24,13 @@ class ASkateCharacter final : public ACharacter, public IPointsSystemInterface
 public:
 	ASkateCharacter();
 
-
 	//~PointsSystem Interface
 	virtual UPointsSystemComponent* GetPointsSystemComponent() const;
 	//~ End of PointsSystem Interface
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	virtual void Tick(float DeltaSeconds);
-	USkaterComponent* GetSkaterComponent();
 
 	void PushForward();
 
@@ -48,9 +47,6 @@ private:
 	void Input_Jump();
 
 	FVector GetTargetMovementDirection() const;
-private:
-	UFUNCTION(Exec)
-	void Debug_Add100Points();
 
 private:
 	UPROPERTY(EditDefaultsOnly)

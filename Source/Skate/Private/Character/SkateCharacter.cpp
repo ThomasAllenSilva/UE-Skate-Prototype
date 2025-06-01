@@ -8,7 +8,7 @@
 #include "Data/DataAsset_SkateControlSettings.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerState.h"
-#include "Components/PointsSystemComponent.h"
+
 ASkateCharacter::ASkateCharacter()
 {
 	SkaterComponent = CreateDefaultSubobject<USkaterComponent>("SkaterComponent");
@@ -62,11 +62,6 @@ void ASkateCharacter::Tick(float DeltaSeconds)
 	{
 		CurrentAcceleration = MinAcceleration;
 	}
-}
-
-USkaterComponent* ASkateCharacter::GetSkaterComponent()
-{
-	return SkaterComponent;
 }
 
 void ASkateCharacter::Input_Accelerate()
@@ -137,9 +132,4 @@ FVector ASkateCharacter::GetTargetMovementDirection() const
 	FVector Direction = FRotationMatrix(ControllerRotation).GetUnitAxis(EAxis::X);
 
 	return Direction;
-}
-
-void ASkateCharacter::Debug_Add100Points()
-{
-	PointsSystemComponent->AddPoints(100);
 }

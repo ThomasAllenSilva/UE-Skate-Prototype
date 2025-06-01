@@ -25,6 +25,9 @@ private:
 	/* Callback for when the player points is updated*/
 	void OnUpdatePoints(int Points);
 
+	/* Used to update the current points text */
+	void UpdatePointsText(int Points);
+
 private:
 	/* The text used for displaying the current points */
 	UPROPERTY(meta = (BindWidget))

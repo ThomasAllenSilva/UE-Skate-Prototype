@@ -16,7 +16,7 @@ void UPlayerPointsUserWidget::NativeConstruct()
 
 	PointsSystemComponent->OnUpdatePoints.AddUObject(this, &ThisClass::OnUpdatePoints);
 
-	PointsText->SetText(FText::AsNumber(PointsSystemComponent->GetCurrentPoints()));
+	UpdatePointsText(PointsSystemComponent->GetCurrentPoints());
 }
 
 void UPlayerPointsUserWidget::NativeDestruct()
@@ -30,6 +30,11 @@ void UPlayerPointsUserWidget::NativeDestruct()
 }
 
 void UPlayerPointsUserWidget::OnUpdatePoints(int Points)
+{
+	UpdatePointsText(Points);
+}
+
+void UPlayerPointsUserWidget::UpdatePointsText(int Points)
 {
 	FText PointsValueText = FText::AsNumber(Points);
 
