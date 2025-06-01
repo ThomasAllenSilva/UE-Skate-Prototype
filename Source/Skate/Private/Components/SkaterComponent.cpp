@@ -103,9 +103,13 @@ bool USkaterComponent::IsAbleToPushForward() const
 
 bool USkaterComponent::IsAbleToJump() const
 {
+	bool bIsPlayingJumpMontage = OwningCharacterAnimInstance->Montage_IsPlaying(JumpMontage);
+
 	bool bIsFalling = OwningCharacter->GetMovementComponent()->IsFalling();
 
-	return bIsFalling == false;
+	bool bIsAbleToJump = (bIsPlayingJumpMontage == false && bIsFalling == false);
+
+	return bIsAbleToJump;
 }
 
 void USkaterComponent::OnNotifyPushForwardMontage()

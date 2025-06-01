@@ -46,7 +46,7 @@ void ASkateCharacter::Tick(float DeltaSeconds)
 
 	FVector Direction = GetTargetMovementDirection() * CurrentAcceleration;
 
-	AddMovementInput(Direction);
+	AddMovementInput(Direction, 1.0f, true);
 
 	CurrentAcceleration -= DeltaSeconds / SkateControlSettings->GetAccelerationDuration();
 
@@ -65,7 +65,7 @@ USkaterComponent* ASkateCharacter::GetSkaterComponent()
 
 void ASkateCharacter::Input_Accelerate()
 {
-	if (CurrentAcceleration < SkateControlSettings->GetTargetAccelerationForImpulse())
+	if (CurrentAcceleration < 1)
 	{
 		SkaterComponent->TryPlayPushForwardMontage();
 	}
@@ -102,7 +102,7 @@ void ASkateCharacter::Input_Jump()
 
 void ASkateCharacter::PushForward()
 {
-	CurrentAcceleration = 1;
+	CurrentAcceleration = SkateControlSettings->GetTargetAccelerationForImpulse();
 
 	FVector Direction = GetTargetMovementDirection() * SkateControlSettings->GetPushImpulse();
 
