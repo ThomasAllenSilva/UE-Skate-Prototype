@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Actor/ObstacleActor.h"
-#include "Data/DataAsset_ObstacleRewardInfo.h"
 #include "Interfaces/PointsSystemInterface.h"
 #include "Components/BoxComponent.h"
 #include "Components/PointsSystemComponent.h"
@@ -15,8 +13,8 @@ AObstacleActor::AObstacleActor()
 	ObstacleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ObstacleMesh"));
 	SetRootComponent(ObstacleMesh);
 
-	TriggerBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBoxComponent"));
-	TriggerBoxComponent->SetupAttachment(GetRootComponent());
+	PointTriggerBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBoxComponent"));
+	PointTriggerBoxComponent->SetupAttachment(GetRootComponent());
 
 	FailTriggerBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("FailTriggerBoxComponent"));
 	FailTriggerBoxComponent->SetupAttachment(GetRootComponent());
@@ -24,12 +22,31 @@ AObstacleActor::AObstacleActor()
 
 void AObstacleActor::BeginPlay()
 {
-	TriggerBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnTriggerBoxOverlap);
+	PointTriggerBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnPointTriggerBoxOverlap);
 	FailTriggerBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnFailTriggerBeginOverlap);
 	FailTriggerBoxComponent->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnFailTriggerEndOverlap);
 }
 
-void AObstacleActor::OnTriggerBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AObstacleActor::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	if (PointTriggerBoxComponent != nullptr)
+	{
+		PointTriggerBoxComponent->OnComponentBeginOverlap.RemoveAll(this);
+	}
+
+	if (FailTriggerBoxComponent != nullptr)
+	{
+		FailTriggerBoxComponent->OnComponentBeginOverlap.RemoveAll(this);
+
+		FailTriggerBoxComponent->OnComponentEndOverlap.RemoveAll(this);
+	}
+
+	FailedActors.Empty();
+}
+
+void AObstacleActor::OnPointTriggerBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (FailedActors.Contains(OtherActor))
 	{
@@ -40,7 +57,7 @@ void AObstacleActor::OnTriggerBoxOverlap(UPrimitiveComponent* OverlappedComponen
 	{
 		UPointsSystemComponent* PointsSystemComponent = PointsSystemInterface->GetPointsSystemComponent();
 
-		PointsSystemComponent->AddPoints(10);
+		PointsSystemComponent->AddPoints(ObstaclePoints);
 	}
 }
 
