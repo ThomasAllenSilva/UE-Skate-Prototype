@@ -24,6 +24,7 @@ public:
 	virtual UPointsSystemComponent* GetPointsSystemComponent() const;
 	//~ End of PointsSystem Interface
 
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UPointsSystemComponent> PointsSystemComponent;

@@ -8,7 +8,7 @@
 #include "Data/DataAsset_SkateControlSettings.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerState.h"
-
+#include "Components/PointsSystemComponent.h"
 ASkateCharacter::ASkateCharacter()
 {
 	SkaterComponent = CreateDefaultSubobject<USkaterComponent>("SkaterComponent");
@@ -137,4 +137,9 @@ FVector ASkateCharacter::GetTargetMovementDirection() const
 	FVector Direction = FRotationMatrix(ControllerRotation).GetUnitAxis(EAxis::X);
 
 	return Direction;
+}
+
+void ASkateCharacter::Debug_Add100Points()
+{
+	PointsSystemComponent->AddPoints(100);
 }

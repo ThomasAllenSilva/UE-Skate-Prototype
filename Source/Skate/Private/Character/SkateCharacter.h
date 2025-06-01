@@ -48,6 +48,9 @@ private:
 	void Input_Jump();
 
 	FVector GetTargetMovementDirection() const;
+private:
+	UFUNCTION(Exec)
+	void Debug_Add100Points();
 
 private:
 	UPROPERTY(EditDefaultsOnly)
