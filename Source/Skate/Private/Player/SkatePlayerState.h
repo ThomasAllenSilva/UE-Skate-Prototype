@@ -10,7 +10,7 @@
 class UPointsSystemComponent;
 
 /**
- *
+ * Default PlayerState class used for this project. It contains information about the PointsSystem
  */
 UCLASS()
 class ASkatePlayerState final : public APlayerState, public IPointsSystemInterface
@@ -24,8 +24,8 @@ public:
 	virtual UPointsSystemComponent* GetPointsSystemComponent() const;
 	//~ End of PointsSystem Interface
 
-
 private:
+	/* The component that holds the points informations */
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UPointsSystemComponent> PointsSystemComponent;
 };

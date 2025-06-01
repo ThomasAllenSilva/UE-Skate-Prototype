@@ -10,7 +10,7 @@ class UTextBlock;
 class UPointsSystemComponent;
 
 /**
- * 
+ * Simple widget used to display the points that the player currently has
  */
 UCLASS()
 class UPlayerPointsUserWidget final : public UUserWidget

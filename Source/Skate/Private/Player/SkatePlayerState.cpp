@@ -6,6 +6,9 @@
 
 ASkatePlayerState::ASkatePlayerState()
 {
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
+
 	PointsSystemComponent = CreateDefaultSubobject<UPointsSystemComponent>("PointsSystemComponent");
 }
 

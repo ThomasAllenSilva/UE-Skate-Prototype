@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "PointsSystemComponent.generated.h"
 
-
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePointsSignature, int);
 
 UCLASS(ClassGroup = (PointsSystem), meta = (BlueprintSpawnableComponent))
@@ -17,13 +16,16 @@ class UPointsSystemComponent final : public UActorComponent
 public:
 	UPointsSystemComponent();
 
+	/* Adds to the current points and notifies listeners about the change */
 	void AddPoints(int Points);
+
+	/* Delegate broadcasted whenever this component points changes */
+	FOnUpdatePointsSignature OnUpdatePoints;
 
 	int GetCurrentPoints() const;
 
-	FOnUpdatePointsSignature OnUpdatePoints;
-
 private:
+	/* The current points that the owner of this component has */
 	UPROPERTY()
 	int CurrentPoints;
 };

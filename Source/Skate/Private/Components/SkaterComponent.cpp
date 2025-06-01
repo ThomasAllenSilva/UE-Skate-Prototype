@@ -10,8 +10,8 @@
 USkaterComponent::USkaterComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
 	PrimaryComponentTick.bStartWithTickEnabled = false;
-	PrimaryComponentTick.bAllowTickOnDedicatedServer = false;
 }
 
 void USkaterComponent::BeginPlay()
@@ -36,7 +36,6 @@ void USkaterComponent::BeginPlay()
 			DelegateNotify->OnNotify.AddUObject(this, &ThisClass::OnNotifyPushForwardMontage);
 		}
 	}
-
 
 	for (const FAnimNotifyEvent& NotifyEvent : JumpMontage->Notifies)
 	{

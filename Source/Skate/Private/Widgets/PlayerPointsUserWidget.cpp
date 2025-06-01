@@ -23,14 +23,17 @@ void UPlayerPointsUserWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	PointsSystemComponent->OnUpdatePoints.RemoveAll(this);
+	if (PointsSystemComponent)
+	{
+		PointsSystemComponent->OnUpdatePoints.RemoveAll(this);
+	}
 }
 
 void UPlayerPointsUserWidget::OnUpdatePoints(int Points)
 {
-    FText PointsValueText = FText::AsNumber(Points);
+	FText PointsValueText = FText::AsNumber(Points);
 
-    FText FinalText = FText::Format(FText::FromString("Points: {0}"), PointsValueText);
+	FText FinalText = FText::Format(FText::FromString("Points: {0}"), PointsValueText);
 
 	PointsText->SetText(FinalText);
 }

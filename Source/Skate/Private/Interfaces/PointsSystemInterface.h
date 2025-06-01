@@ -22,6 +22,6 @@ class IPointsSystemInterface
 	GENERATED_BODY()
 
 public:
-	/** Returns the points system component to use for this actor */
+	/** Returns the points system component used by this actor */
 	virtual UPointsSystemComponent* GetPointsSystemComponent() const = 0;
 };

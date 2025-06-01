@@ -9,7 +9,7 @@
 class ASkateCharacter;
 
 /*
-*
+* Handles movement-related animations and events for the owning skate character
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class USkaterComponent final : public UActorComponent
@@ -23,17 +23,23 @@ public:
 
 	virtual void BeginDestroy() override;
 
+	/* Checks whether the push montage can be played before executing it */
 	void TryPlayPushForwardMontage();
 
+	/* Plays the jump montage selected for this component */
 	void PlayJumpMontage();
 
+	/* Checks if the player can add a boost to the SkateBoard */
 	bool IsAbleToPushForward() const;
 
+	/* Checks if the player can jump */
 	bool IsAbleToJump() const;
 
 private:
+	/* Callback received from the push forward montage event */
 	void OnNotifyPushForwardMontage();
 
+	/* Callback received from the jump montage event */
 	void OnNotifyJumpMontage();
 
 private:
