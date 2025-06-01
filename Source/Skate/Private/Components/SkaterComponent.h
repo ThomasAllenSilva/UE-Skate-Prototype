@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "SkaterComponent.generated.h"
 
+class ASkateCharacter;
+
 /*
 *
 */
@@ -23,19 +25,29 @@ public:
 
 	void TryPlayPushForwardMontage();
 
+	void PlayJumpMontage();
+
 	bool IsAbleToPushForward() const;
+
+	bool IsAbleToJump() const;
 
 private:
 	void OnNotifyPushForwardMontage();
+
+	void OnNotifyJumpMontage();
 
 private:
 	/*The montage to play when a new push is required */
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAnimMontage> PushSkateForwardMontage;
 
+	/*The montage to play when a new push is required */
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UAnimMontage> JumpMontage;
+
 	/* The owning character of this component */
 	UPROPERTY()
-	TObjectPtr<ACharacter> OwningCharacter;
+	TObjectPtr<ASkateCharacter> OwningCharacter;
 
 	/* The anim instance used by the owning characater */
 	UPROPERTY()
