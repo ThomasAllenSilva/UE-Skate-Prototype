@@ -3,10 +3,15 @@
 This project was developed with Unreal Engine 5.5.4 using only C++ (No blueprints code involved) as a challenge within 48 hours. It simulates a Skateboarding game leveraging a prototype that contains the following features:
 
 Skate Movement
+
 Jumping
+
 Pushing
+
 Slow Down
+
 Points System
+
 Playtest Level & UI
 
 
