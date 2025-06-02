@@ -10,6 +10,9 @@
 void UPlayerPointsUserWidget::NativeConstruct()
 {
 	APlayerState* PlayerState = UGameplayStatics::GetPlayerState(this, 0);
+
+	check(PlayerState);
+
 	IPointsSystemInterface* PointsSystemInterface = CastChecked<IPointsSystemInterface>(PlayerState);
 
 	PointsSystemComponent = PointsSystemInterface->GetPointsSystemComponent();
