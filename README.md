@@ -55,11 +55,19 @@ These are the approximated values that I spent on each task. This also considers
 
 
 Movement Functionality: 11h
+
 Level: 1h
+
 Jumping: 3h
+
 Pushing Functionality: 3h
+
 Slow Down Functionality: 2h
+
 Points system: 2h
+
 UI: 1h
+
 Animation: 1h
+
 Total: 24h
