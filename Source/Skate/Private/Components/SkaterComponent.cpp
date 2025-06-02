@@ -4,7 +4,7 @@
 #include "Components/SkaterComponent.h"
 #include "Animation/Notify/AnimNotify_BroadcastDelegate.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SkateMovementComponent.h"
 #include "Character/SkateCharacter.h"
 
 USkaterComponent::USkaterComponent()
@@ -18,14 +18,9 @@ void USkaterComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwningCharacter = CastChecked<ASkateCharacter>(GetOwner());
-
-	if (OwningCharacter->IsLocallyControlled() == false)
-	{
-		return;
-	}
-
 	check(PushSkateForwardMontage);
+
+	OwningCharacter = CastChecked<ASkateCharacter>(GetOwner());
 
 	OwningCharacterAnimInstance = OwningCharacter->GetMesh()->GetAnimInstance();
 
@@ -93,9 +88,9 @@ bool USkaterComponent::IsAbleToPushForward() const
 
 	bool bIsPlayingJumpMontage = OwningCharacterAnimInstance->Montage_IsPlaying(JumpMontage);
 
-	bool bIsFalling = OwningCharacter->GetMovementComponent()->IsFalling();
+	bool bIsGrounded = OwningCharacter->GetSkateMovementComponent()->IsCharacterGrounded();
 
-	bool bIsAbleToPushForward = (bIsPlayingPushMontage == false && bIsFalling == false && bIsPlayingJumpMontage == false);
+	bool bIsAbleToPushForward = (bIsPlayingPushMontage == false && bIsGrounded && bIsPlayingJumpMontage == false);
 
 	return bIsAbleToPushForward;
 }
@@ -118,5 +113,5 @@ void USkaterComponent::OnNotifyPushForwardMontage()
 
 void USkaterComponent::OnNotifyJumpMontage()
 {
-	OwningCharacter->Jump();
+	OwningCharacter->GetSkateMovementComponent()->Jump();
 }

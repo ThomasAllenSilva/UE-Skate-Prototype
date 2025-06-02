@@ -8,6 +8,9 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePointsSignature, int);
 
+/*
+* Manages a point system for the owning actor
+*/
 UCLASS(ClassGroup = (PointsSystem), meta = (BlueprintSpawnableComponent))
 class UPointsSystemComponent final : public UActorComponent
 {

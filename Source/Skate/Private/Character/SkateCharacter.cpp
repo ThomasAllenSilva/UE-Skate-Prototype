@@ -5,8 +5,7 @@
 #include "Components/SkaterComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "Data/DataAsset_SkateControlSettings.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SkateMovementComponent.h"
 #include "GameFramework/PlayerState.h"
 
 ASkateCharacter::ASkateCharacter()
@@ -17,6 +16,26 @@ ASkateCharacter::ASkateCharacter()
 UPointsSystemComponent* ASkateCharacter::GetPointsSystemComponent() const
 {
 	return PointsSystemComponent;
+}
+
+USkateMovementComponent* ASkateCharacter::GetSkateMovementComponent() const
+{
+	return SkateMovementComponent;
+}
+
+void ASkateCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	APlayerState* CurrentPlayerState = GetPlayerState<APlayerState>();
+
+	IPointsSystemInterface* PointsSystemInterface = CastChecked<IPointsSystemInterface>(CurrentPlayerState);
+
+	PointsSystemComponent = PointsSystemInterface->GetPointsSystemComponent();
+
+	SkateMovementComponent = CastChecked<USkateMovementComponent>(GetCharacterMovement());
+
+	check(PointsSystemComponent);
 }
 
 void ASkateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -46,51 +65,21 @@ void ASkateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	}
 }
 
-void ASkateCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	FVector Direction = GetTargetMovementDirection() * CurrentAcceleration;
-
-	AddMovementInput(Direction, 1.0f, true);
-
-	CurrentAcceleration -= DeltaSeconds / SkateControlSettings->GetAccelerationDuration();
-
-	float MinAcceleration = SkateControlSettings->GetMinAcceleration();
-
-	if (CurrentAcceleration <= MinAcceleration)
-	{
-		CurrentAcceleration = MinAcceleration;
-	}
-}
-
 void ASkateCharacter::Input_Accelerate()
 {
-	if (CurrentAcceleration < 1)
-	{
-		SkaterComponent->TryPlayPushForwardMontage();
-	}
+	SkaterComponent->TryPlayPushForwardMontage();
 }
 
 void ASkateCharacter::Input_Turn(const FInputActionValue& InputValue)
 {
 	float TurnValue = InputValue.Get<float>();
 
-	TurnValue *= SkateControlSettings->GetTurnRate();
-
 	Cast<APlayerController>(GetController())->AddYawInput(TurnValue);
 }
 
 void ASkateCharacter::Input_Slowdown()
 {
-	CurrentAcceleration = FApp::GetDeltaTime();
-
-	float MinAcceleration = SkateControlSettings->GetMinAcceleration();
-
-	if (CurrentAcceleration <= MinAcceleration)
-	{
-		CurrentAcceleration = MinAcceleration;
-	}
+	SkateMovementComponent->SlowDown();
 }
 
 void ASkateCharacter::Input_Jump()
@@ -103,24 +92,9 @@ void ASkateCharacter::Input_Jump()
 
 void ASkateCharacter::PushForward()
 {
-	CurrentAcceleration = SkateControlSettings->GetTargetAccelerationForImpulse();
+	FVector Direction = GetTargetMovementDirection();
 
-	FVector Direction = GetTargetMovementDirection() * SkateControlSettings->GetPushImpulse();
-
-	GetCharacterMovement()->AddImpulse(Direction, true);
-}
-
-void ASkateCharacter::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-
-	APlayerState* CurrentPlayerState = GetPlayerState<APlayerState>();
-
-	IPointsSystemInterface* PointsSystemInterface = CastChecked<IPointsSystemInterface>(CurrentPlayerState);
-
-	PointsSystemComponent = PointsSystemInterface->GetPointsSystemComponent();
-
-	check(PointsSystemComponent);
+	SkateMovementComponent->Push(Direction);
 }
 
 FVector ASkateCharacter::GetTargetMovementDirection() const
