@@ -41,6 +41,8 @@ public:
 protected:
 	virtual void PossessedBy(AController* NewController) override;
 
+	virtual void BeginPlay() override;
+
 private:
 	/* Callback for when the accelerate input is triggered. Used for push the skate forward using montage */
 	void Input_Accelerate();
@@ -90,4 +92,7 @@ private:
 	/* The movement component used to control this character */
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USkateMovementComponent> SkateMovementComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> PointsWidget; //Ideally this wouldn't be here, but I don't have much time left on the challenge and since it's only one widget, I think it's fine
 };

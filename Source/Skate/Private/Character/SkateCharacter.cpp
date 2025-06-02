@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "Components/SkateMovementComponent.h"
 #include "GameFramework/PlayerState.h"
+#include "Blueprint/UserWidget.h"
 
 ASkateCharacter::ASkateCharacter()
 {
@@ -36,6 +37,17 @@ void ASkateCharacter::PossessedBy(AController* NewController)
 	SkateMovementComponent = CastChecked<USkateMovementComponent>(GetCharacterMovement());
 
 	check(PointsSystemComponent);
+}
+
+void ASkateCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(PointsWidget);
+
+	UUserWidget* WidgetInstance = CreateWidget<UUserWidget>(GetWorld(), PointsWidget);
+
+	WidgetInstance->AddToViewport();
 }
 
 void ASkateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
